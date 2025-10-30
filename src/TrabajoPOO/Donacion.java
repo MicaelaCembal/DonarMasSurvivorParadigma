@@ -12,7 +12,7 @@ public class Donacion {
     private LocalDateTime fecha;                  // Fecha y hora de registro
 
 
-    private Campaña campaña;
+    private Campania campania;
     private Deposito deposito;
 
 
@@ -33,8 +33,8 @@ public class Donacion {
         System.out.println("Cantidad: " + cantidad);
         System.out.println("Fecha: " + fecha);
         System.out.println("Estado: " + estadoDonacion);
-        if (campaña != null)
-            System.out.println("Campaña: " + campaña.getNombre());
+        if (campania != null)
+            System.out.println("Campaña: " + campania.getNombre());
         if (deposito != null)
             System.out.println("Depósito: " + deposito.getUbicacion());
         System.out.println("-------------------------");
@@ -47,8 +47,8 @@ public class Donacion {
     }
 
 
-    public void asignarCampaña(Campaña c) {
-        this.campaña = c;
+    public void asignarCampania(Campania c) {
+        this.campania = c;
         c.agregarDonacion(this);
         System.out.println("Donación ID " + idDonacion + " asociada a la campaña " + c.getNombre());
     }
@@ -80,8 +80,8 @@ public class Donacion {
         return fecha;
     }
 
-    public Campaña getCampaña() {
-        return campaña;
+    public Campania getCampaña() {
+        return campania;
     }
 
     public Deposito getDeposito() {

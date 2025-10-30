@@ -3,7 +3,7 @@ package TrabajoPOO;
 import java.util.List;
 import java.time.LocalDateTime;
 
-public class Campaña {
+public class Campania {
     private int idCampania;
     private String nombre;
     private String descripcion;
@@ -14,4 +14,12 @@ public class Campaña {
     public void agregarDonacion(Donacion d) {}
     public void eliminarDonacion(Donacion d) {}
     public List<Donacion> obtenerDonaciones() { return listaDonaciones; }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }

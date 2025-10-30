@@ -16,4 +16,12 @@ public class Deposito {
     public void listarDonaciones() {}
 
     public void mostrarInventario() {}
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 }
