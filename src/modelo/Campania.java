@@ -1,19 +1,36 @@
 package modelo;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
 
-public class Campania {
+public class Campania implements IAsociable {
     private int idCampania;
     private String nombre;
     private String descripcion;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFin;
     private List<Donacion> listaDonaciones;
 
-    public void agregarDonacion(Donacion d) {}
-    public void eliminarDonacion(Donacion d) {}
-    public List<Donacion> obtenerDonaciones() { return listaDonaciones; }
+    public Campania() {
+        listaDonaciones = new ArrayList<>();
+    }
+
+
+    public void asociarDonacion(Donacion donacion) {
+        listaDonaciones.add(donacion);
+    }
+
+    @Override
+    public void agregarDonacion(Donacion donacion) {
+
+    }
+
+    @Override
+    public String getIdentificador() {
+        return "Campaña: " + nombre;
+    }
+
+    public List<Donacion> obtenerDonaciones() {
+        return listaDonaciones;
+    }
 
     public String getNombre() {
         return nombre;
@@ -23,3 +40,5 @@ public class Campania {
         this.nombre = nombre;
     }
 }
+
+
