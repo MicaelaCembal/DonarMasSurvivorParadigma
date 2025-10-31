@@ -11,7 +11,7 @@ public class Deposito implements IAsociable {
     private int idDeposito;
     private String ubicacion;
     private List<Donacion> listaDonaciones;
-    private List<InventarioItem> inventario;
+    private List<InventarioItem> inventario; // Requisito del UML
 
     public Deposito() {
         listaDonaciones = new ArrayList<>();
@@ -19,31 +19,32 @@ public class Deposito implements IAsociable {
     }
 
 
+
     @Override
     public void agregarDonacion(Donacion donacion) {
         if (!verificarEstadoDisponible()) {
-            System.out.println("Depósito lleno: El depósito '" + this.ubicacion +
+            System.out.println("⚠️ Depósito lleno: El depósito '" + this.ubicacion +
                     "' ha alcanzado su límite de " + CAPACIDAD_MAXIMA +
                     " donaciones. Se debe asignar a otro depósito.");
             return;
         }
 
         listaDonaciones.add(donacion);
-        System.out.println("Donación ID " + donacion.getIdDonacion() +
+        System.out.println("✅ Donación ID " + donacion.getIdDonacion() +
                 " añadida al depósito " + ubicacion + ".");
 
-        // Lógica: La donación debe impactar el inventario (simulación)
+        // La donación debe impactar el inventario
         actualizarInventario(donacion);
     }
 
-
+    /**
+     * Lógica auxiliar para mantener el inventario sincronizado con las donaciones.
+     */
     private void actualizarInventario(Donacion donacion) {
-        // En una implementación real, se buscaría el item y se actualizaría la cantidad.
+        // En una implementación real se buscaría el InventarioItem y se actualizaría la cantidad.
         boolean encontrado = false;
         for (InventarioItem item : inventario) {
             if (item.getDescripcion().equalsIgnoreCase(donacion.getTipoDonacion())) {
-                // Como no tenemos un setter en InventarioItem.java (archivo provisto),
-                // para simular la actualización, simplemente se marca como encontrado.
                 encontrado = true;
                 break;
             }
@@ -56,13 +57,19 @@ public class Deposito implements IAsociable {
     }
 
 
+    /**
+     * Requisito del UML: verifica si hay espacio disponible en el depósito.
+     * @return true si hay espacio, false si está lleno.
+     */
     public boolean verificarEstadoDisponible() {
         return listaDonaciones.size() < CAPACIDAD_MAXIMA;
     }
 
-
+    /**
+     * Requisito del UML: Muestra el contenido del inventario.
+     */
     public void mostrarInventario() {
-        System.out.println(" Inventario del Depósito: " + ubicacion + " ");
+        System.out.println("=== Inventario del Depósito: " + ubicacion + " ===");
         if (inventario.isEmpty()) {
             System.out.println("El inventario está vacío.");
         } else {
@@ -79,6 +86,7 @@ public class Deposito implements IAsociable {
         return "Depósito: " + ubicacion;
     }
 
+    // Getters y Setters
     public String getUbicacion() {
         return ubicacion;
     }

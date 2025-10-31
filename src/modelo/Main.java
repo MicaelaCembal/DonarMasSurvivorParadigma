@@ -11,7 +11,10 @@ public class Main {
 
         GestorDonacion gestor = new GestorDonacion();
 
-        Donacion d1 = new Donacion(1, "Ropa", 30);
+        // ----------------------------------------------------------------------
+        // CORRECCIÓN: Se elimina el ID manual, ahora lo asigna Donacion.java
+        // ----------------------------------------------------------------------
+        Donacion d1 = new Donacion("Ropa", 30); // Nuevo constructor: (tipo, cantidad)
         gestor.guardarDonacion(d1);
 
         System.out.println("Donaciones guardadas en la base:");
