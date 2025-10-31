@@ -1,21 +1,31 @@
 package modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Deposito {
+public class Deposito implements IAsociable {
     private int idDeposito;
     private String ubicacion;
-    private int capacidad;
     private List<Donacion> listaDonaciones;
-    private List<InventarioItem> inventario;
 
-    public boolean verificarEstadoDisponible() {
-        return false;
+    public Deposito() {
+        listaDonaciones = new ArrayList<>();
     }
 
-    public void listarDonaciones() {}
 
-    public void mostrarInventario() {}
+    public void asociarDonacion(Donacion donacion) {
+        listaDonaciones.add(donacion);
+    }
+
+    @Override
+    public void agregarDonacion(Donacion donacion) {
+
+    }
+
+    @Override
+    public String getIdentificador() {
+        return "Depósito: " + ubicacion;
+    }
 
     public String getUbicacion() {
         return ubicacion;
@@ -24,4 +34,9 @@ public class Deposito {
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
     }
+
+    public List<Donacion> getListaDonaciones() {
+        return listaDonaciones;
+    }
 }
+
