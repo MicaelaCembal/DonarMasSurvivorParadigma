@@ -20,7 +20,7 @@ public class Campania implements IAsociable {
 
     @Override
     public void agregarDonacion(Donacion donacion) {
-
+        listaDonaciones.add(donacion); // AÑADIR ESTA LÍNEA
     }
 
     @Override
