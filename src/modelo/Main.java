@@ -1,7 +1,7 @@
-package TrabajoPOO;
+package modelo;
 
-import datos.ConexionDB;
-import datos.GestorDonacion;
+import modelo.datos.ConexionDB;
+import modelo.datos.GestorDonacion;
 
 public class Main {
     public static void main(String[] args) {

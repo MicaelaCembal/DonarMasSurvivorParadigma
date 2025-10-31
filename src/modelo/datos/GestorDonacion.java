@@ -1,7 +1,7 @@
-package datos;
+package modelo.datos;
 
-import TrabajoPOO.Donacion;
-import TrabajoPOO.EstadoDonacion;
+import modelo.Donacion;
+import modelo.EstadoDonacion;
 
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +30,7 @@ public class GestorDonacion {
             ps.setString(7, donacion.getDeposito() != null ? donacion.getDeposito().getUbicacion() : null);
 
             ps.executeUpdate();
-            System.out.println("✅ Donación guardada correctamente en la base de datos.");
+            System.out.println("✅ Donación guardada correctamente en la base de modelo.datos.");
 
         } catch (SQLException e) {
             System.err.println("❌ Error al guardar la donación: " + e.getMessage());

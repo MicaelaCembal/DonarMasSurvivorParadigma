@@ -1,4 +1,4 @@
-package datos;
+package modelo.datos;
 
 import java.sql.*;
 
@@ -17,11 +17,11 @@ public class ConexionDB {
         try {
             Class.forName(DRIVER);
             conexion = DriverManager.getConnection(URL + DB_NAME, USUARIO, PASSWORD);
-            System.out.println("✅ Conexión exitosa a la base de datos: " + DB_NAME);
+            System.out.println("✅ Conexión exitosa a la base de modelo.datos: " + DB_NAME);
         } catch (ClassNotFoundException e) {
             System.err.println("❌ Error: no se encontró el driver JDBC.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al conectar con la base de datos: " + e.getMessage());
+            System.err.println("❌ Error al conectar con la base de modelo.datos: " + e.getMessage());
         }
         return conexion;
     }
@@ -51,7 +51,7 @@ public class ConexionDB {
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             stmt = conexion.createStatement();
 
-            // Crear la base de datos
+            // Crear la base de modelo.datos
             stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + DB_NAME);
             stmt.executeUpdate("USE " + DB_NAME);
 
@@ -68,7 +68,7 @@ public class ConexionDB {
                 )
             """);
 
-            System.out.println("✅ Base de datos y tabla 'donacion' creadas correctamente.");
+            System.out.println("✅ Base de modelo.datos y tabla 'donacion' creadas correctamente.");
 
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println("❌ Error al crear la base o tabla: " + e.getMessage());

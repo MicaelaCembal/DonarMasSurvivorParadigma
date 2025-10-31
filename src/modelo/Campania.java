@@ -1,4 +1,4 @@
-package TrabajoPOO;
+package modelo;
 
 import java.util.List;
 import java.time.LocalDateTime;

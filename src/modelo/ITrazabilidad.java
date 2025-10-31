@@ -1,4 +1,4 @@
-package TrabajoPOO;
+package modelo;
 
 public interface ITrazabilidad {
     void obtenerHistorial();
