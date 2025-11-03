@@ -1,5 +1,7 @@
 package vista;
 
+import modelo.*;
+import modelo.datos.GestorDonacion;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,24 +15,32 @@ public class FormRegistrarDonacion extends JFrame {
     private JTextField txtLugarEntrega;
     private JButton btnRegistrarDonacion;
     private JLabel lblMensaje;
+    private GestorDonacion gestor;
 
     public FormRegistrarDonacion() {
         inicializar();
+        gestor = new GestorDonacion();
 
         btnRegistrarDonacion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String objeto = txtObjetoDonar.getText().trim();
-                String cantidad = txtCantidad.getText().trim();
+                String cantidadStr = txtCantidad.getText().trim();
                 String lugar = txtLugarEntrega.getText().trim();
 
-                if (objeto.isEmpty() || cantidad.isEmpty() || lugar.isEmpty()) {
-                    lblMensaje.setText("Por favor, complete todos los campos.");
-                } else {
-                    lblMensaje.setText("Donación registrada: " + cantidad + " " + objeto + " en " + lugar + ".");
-                    // Acá podrías conectar con tu backend o base de datos, por ejemplo:
-                    // GestorDonacion.registrar(new Donacion(objeto, cantidad, lugar));
+                if (objeto.isEmpty() || cantidadStr.isEmpty() || lugar.isEmpty()) {
+                    lblMensaje.setText("Complete todos los campos.");
+                    return;
+                }
+
+                try {
+                    int cantidad = Integer.parseInt(cantidadStr);
+                    Donacion donacion = new Donacion(objeto, cantidad);
+                    gestor.guardarDonacion(donacion);
+                    lblMensaje.setText("Donación registrada con éxito.");
                     limpiarCampos();
+                } catch (NumberFormatException ex) {
+                    lblMensaje.setText("La cantidad debe ser un número válido.");
                 }
             }
         });
