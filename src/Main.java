@@ -1,4 +1,5 @@
 import vista.FormAcceso;
+import vista.FormRegistrarDonacion;
 
 public class Main {
     public static void main(String[] args) {

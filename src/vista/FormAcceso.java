@@ -24,12 +24,12 @@ public class FormAcceso extends JFrame {
                 String usuario = txtNombre.getText();
                 String clave = pwdClave.getText();
 
-                if(usuario.equals("admin") && clave.equals("123")){
+                if(usuario.equals("donante") && clave.equals("123")){
                     lblMensaje.setText("Acceso correcto");
 
                     // Crear y mostrar la siguiente ventana
-                    FormUsuarios ventanaUsuarios = new FormUsuarios();
-                    ventanaUsuarios.setVisible(true);
+                    FormRegistrarDonacion registrarDonacion = new FormRegistrarDonacion();
+                    registrarDonacion.setVisible(true);
 
                     // Cerrar la ventana actual
                     dispose();
