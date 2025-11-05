@@ -1,8 +1,6 @@
 package vista;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class FormAcceso extends JFrame {
     private JPanel pnlSuperior;
@@ -15,30 +13,6 @@ public class FormAcceso extends JFrame {
 
     public FormAcceso(){
         inicializar();
-
-        btnIngresar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                // Verificamos usuario y clave
-                String usuario = txtNombre.getText();
-                String clave = pwdClave.getText();
-
-                if(usuario.equals("donante") && clave.equals("123")){
-                    lblMensaje.setText("Acceso correcto");
-
-                    // Crear y mostrar la siguiente ventana
-                    FormRegistrarDonacion registrarDonacion = new FormRegistrarDonacion();
-                    registrarDonacion.setVisible(true);
-
-                    // Cerrar la ventana actual
-                    dispose();
-
-                } else {
-                    lblMensaje.setText("Usuario o clave incorrectos");
-                }
-            }
-        });
     }
 
     private void inicializar(){
@@ -47,5 +21,22 @@ public class FormAcceso extends JFrame {
         setSize(600,400);
         setLocationRelativeTo(null);
         setTitle("Formulario de Acceso");
+    }
+
+    // 🔹 Getters necesarios para el controlador
+    public JButton getBtnIngresar() {
+        return btnIngresar;
+    }
+
+    public JTextField getTxtNombre() {
+        return txtNombre;
+    }
+
+    public JFormattedTextField getPwdClave() {
+        return pwdClave;
+    }
+
+    public JLabel getLblMensaje() {
+        return lblMensaje;
     }
 }

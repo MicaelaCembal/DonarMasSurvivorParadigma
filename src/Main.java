@@ -1,10 +1,11 @@
+import controlador.ControladorAcceso;
 import vista.FormAcceso;
-import vista.FormRegistrarDonacion;
 
 public class Main {
     public static void main(String[] args) {
-        // Iniciamos la aplicación mostrando el formulario de acceso
-        FormAcceso formulario = new FormAcceso();
-        formulario.setVisible(true);
+        FormAcceso acceso = new FormAcceso();
+        new ControladorAcceso(acceso);
+        acceso.setVisible(true);
+
     }
 }
