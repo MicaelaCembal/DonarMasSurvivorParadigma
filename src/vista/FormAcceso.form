@@ -72,6 +72,7 @@
         </constraints>
         <properties>
           <background color="-11466822"/>
+          <foreground color="-394241"/>
           <text value=""/>
         </properties>
       </component>
@@ -91,6 +92,7 @@
         </constraints>
         <properties>
           <background color="-11466822"/>
+          <foreground color="-394241"/>
         </properties>
       </component>
       <component id="c92ee" class="javax.swing.JButton" binding="btnIngresar">
