@@ -23,7 +23,6 @@ public class FormAcceso extends JFrame {
         setTitle("Formulario de Acceso");
     }
 
-    // 🔹 Getters necesarios para el controlador
     public JButton getBtnIngresar() {
         return btnIngresar;
     }
