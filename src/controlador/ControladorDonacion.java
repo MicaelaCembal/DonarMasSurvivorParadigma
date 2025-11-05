@@ -33,12 +33,22 @@ public class ControladorDonacion implements ActionListener {
 
             try {
                 int cantidad = Integer.parseInt(cantidadStr);
+
+                // Esto ahora puede lanzar CantidadInvalidaException
                 Donacion donacion = new Donacion(objeto, cantidad);
+
                 gestor.guardarDonacion(donacion);
-                vista.getLblMensaje().setText("Donación registrada con éxito.");
+                vista.getLblMensaje().setText("✅ Donación registrada con éxito.");
                 vista.limpiarCampos();
+
             } catch (NumberFormatException ex) {
-                vista.getLblMensaje().setText("La cantidad debe ser un número válido.");
+                vista.getLblMensaje().setText("❌ La cantidad debe ser un número entero.");
+            } catch (Donacion.CantidadInvalidaException ex) {
+                // Captura la excepción de negocio anidada
+                vista.getLblMensaje().setText("⚠️ " + ex.getMessage());
+            } catch (Exception ex) {
+                System.err.println("Error inesperado: " + ex.getMessage());
+                vista.getLblMensaje().setText("❌ Error inesperado.");
             }
         }
     }
