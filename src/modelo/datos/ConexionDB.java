@@ -7,11 +7,8 @@ public class ConexionDB {
     private static final String URL = "jdbc:mysql://localhost:3306/";
     private static final String DB_NAME = "donarmas";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "mysql"; // Cambiá por la tuya si es distinta
+    private static final String PASSWORD = "mysql";
 
-    // ------------------------------
-    // MÉTODO DE CONEXIÓN
-    // ------------------------------
     public Connection conectar() {
         Connection conexion = null;
         try {
@@ -26,9 +23,6 @@ public class ConexionDB {
         return conexion;
     }
 
-    // ------------------------------
-    // CERRAR CONEXIÓN
-    // ------------------------------
     public void cerrarConexion(Connection conexion) {
         try {
             if (conexion != null && !conexion.isClosed()) {
@@ -39,9 +33,7 @@ public class ConexionDB {
         }
     }
 
-    // ------------------------------
-    // CREAR BD Y TABLAS
-    // ------------------------------
+
     public void crearBaseYTablas() {
         Connection conexion = null;
         Statement stmt = null;
@@ -50,12 +42,9 @@ public class ConexionDB {
             Class.forName(DRIVER);
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             stmt = conexion.createStatement();
-
-            // Crear la base de modelo.datos
             stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + DB_NAME);
             stmt.executeUpdate("USE " + DB_NAME);
 
-            // Tabla de donaciones
             stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS donacion (
                     idDonacion INT PRIMARY KEY,
