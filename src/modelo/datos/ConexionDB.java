@@ -14,11 +14,10 @@ public class ConexionDB {
         try {
             Class.forName(DRIVER);
             conexion = DriverManager.getConnection(URL + DB_NAME, USUARIO, PASSWORD);
-            System.out.println("✅ Conexión exitosa a la base de modelo.datos: " + DB_NAME);
         } catch (ClassNotFoundException e) {
-            System.err.println("❌ Error: no se encontró el driver JDBC.");
+            System.err.println("Error: no se encontro el driver JDBC.");
         } catch (SQLException e) {
-            System.err.println("❌ Error al conectar con la base de modelo.datos: " + e.getMessage());
+            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
         }
         return conexion;
     }
@@ -29,10 +28,9 @@ public class ConexionDB {
                 conexion.close();
             }
         } catch (SQLException e) {
-            System.err.println("Error al cerrar la conexión: " + e.getMessage());
+            System.err.println("Error al cerrar la conexion: " + e.getMessage());
         }
     }
-
 
     public void crearBaseYTablas() {
         Connection conexion = null;
@@ -42,6 +40,7 @@ public class ConexionDB {
             Class.forName(DRIVER);
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             stmt = conexion.createStatement();
+
             stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + DB_NAME);
             stmt.executeUpdate("USE " + DB_NAME);
 
@@ -56,12 +55,24 @@ public class ConexionDB {
                     deposito VARCHAR(50)
                 )
             """);
+            System.out.println("Tabla 'donacion' verificada.");
 
-            System.out.println("✅ Base de modelo.datos y tabla 'donacion' creadas correctamente.");
+            // AGREGADO 'UNIQUE' A LA COLUMNA MAIL
+            stmt.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS usuario (
+                    idUsuario INT PRIMARY KEY AUTO_INCREMENT,
+                    nombre VARCHAR(100),
+                    mail VARCHAR(100) UNIQUE,
+                    contraseña VARCHAR(50),
+                    tipo VARCHAR(30)
+                )
+            """);
+            System.out.println("Tabla 'usuario' verificada.");
 
         } catch (ClassNotFoundException | SQLException e) {
-            System.err.println("❌ Error al crear la base o tabla: " + e.getMessage());
+            System.err.println("Error al crear la base o tablas: " + e.getMessage());
         } finally {
+            try { if (stmt != null) stmt.close(); } catch (SQLException e) { /* ignorar */ }
             cerrarConexion(conexion);
         }
     }

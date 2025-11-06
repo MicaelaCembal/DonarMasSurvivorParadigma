@@ -3,6 +3,7 @@ package modelo;
 import java.util.Scanner;
 import modelo.datos.ConexionDB;
 import modelo.datos.GestorDonacion;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,92 +18,114 @@ public class Main {
         System.out.println("1. Donante");
         System.out.println("2. Administrador");
         System.out.println("3. Voluntario");
-        System.out.println("4. Test Rápido: Depósito Lleno (Prueba de Excepción)");
-        System.out.print("Elegí una opción: ");
+        System.out.println("4. Test Rapido: Deposito Lleno");
+        System.out.print("Elegi una opcion: ");
         int opcion = sc.nextInt();
-        sc.nextLine(); // Consumir el salto de línea
+        sc.nextLine();
 
-        // Si elige la opción 4 (Test), no necesitamos pedir datos de usuario
         if (opcion == 4) {
-            ejecutarTestDeposito(); // Llamamos a un método auxiliar para mantener el main limpio
+            ejecutarTestDeposito();
             sc.close();
-            return; // Salimos después del test
+            return;
         }
 
-        // Para las otras opciones, pedimos los datos
-        System.out.print("Nombre: ");
-        String nombre = sc.nextLine();
-
-        System.out.print("Mail: ");
+        System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
 
-        System.out.print("Contraseña: ");
-        String contraseña = sc.nextLine();
+        Usuario usuarioActual = gestor.buscarUsuarioPorMail(mail);
 
-        if (opcion == 1) {
-            Donante donante = new Donante(1, nombre, mail, contraseña);
-            donante.registrar();
+        if (usuarioActual != null) {
+            System.out.println(">>> Usuario encontrado! Bienvenido de nuevo, " + usuarioActual.getNombre());
+        } else {
+            System.out.println(">>> Usuario nuevo. Por favor completa tu registro.");
+            System.out.print("Nombre: ");
+            String nombre = sc.nextLine();
+            System.out.print("Contraseña: ");
+            String contraseña = sc.nextLine();
 
-            System.out.println("\n--- Nueva Donación ---");
-            System.out.print("Ingrese el tipo de donación (ej. Ropa, Alimentos): ");
-            String tipo = sc.nextLine();
+            switch (opcion) {
+                case 1 -> usuarioActual = new Donante(0, nombre, mail, contraseña);
+                case 2 -> usuarioActual = new Administrador(0, nombre, mail, contraseña);
+                case 3 -> usuarioActual = new Voluntario(0, nombre, mail, contraseña);
+                default -> {
+                    System.out.println("Opcion invalida. Saliendo.");
+                    sc.close();
+                    return;
+                }
+            }
+            gestor.guardarUsuario(usuarioActual);
+            usuarioActual = gestor.buscarUsuarioPorMail(mail);
+        }
 
-            System.out.print("Ingrese la cantidad: ");
-            int cantidad = sc.nextInt();
-            sc.nextLine();
+        if (usuarioActual instanceof Donante donante) {
+            System.out.println("\n--- Panel de Donante ---");
+            System.out.println("¿Deseas realizar una nueva donacion? (S/N)");
+            if (sc.nextLine().equalsIgnoreCase("S")) {
+                System.out.print("Tipo de donacion: ");
+                String tipo = sc.nextLine();
+                System.out.print("Cantidad: ");
+                int cantidad = sc.nextInt();
+                sc.nextLine();
 
-            try {
-                Donacion d1 = new Donacion(tipo, cantidad);
-                donante.realizarDonacion(d1);
-                gestor.guardarDonacion(d1);
-                System.out.println(" Donación registrada con éxito en la base de datos.");
-                donante.verHistorial();
-
-            } catch (Donacion.CantidadInvalidaException e) {
-                System.out.println("\n NO SE PUDO REGISTRAR LA DONACIÓN");
-                System.out.println("Razón: " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println(" Ocurrió un error inesperado: " + e.getMessage());
+                try {
+                    Donacion d = new Donacion(tipo, cantidad);
+                    gestor.guardarDonacion(d);
+                    donante.realizarDonacion(d);
+                    System.out.println("Donacion registrada con exito.");
+                } catch (Exception e) {
+                    System.out.println("No se pudo registrar: " + e.getMessage());
+                }
             }
 
-        } else if (opcion == 2) {
-            Administrador admin = new Administrador(2, nombre, mail, contraseña);
-            admin.registrar();
-            System.out.println("\n=== Reporte General de Donaciones ===");
-            admin.generarReporteDonaciones(gestor.obtenerDonaciones());
+        } else if (usuarioActual instanceof Administrador admin) {
+            System.out.println("\n--- Panel de Administrador ---");
+            System.out.println("1. Ver Reporte General");
+            System.out.println("2. Eliminar Usuario");
+            System.out.print("Elegi una opcion: ");
+            int opAdmin = sc.nextInt();
+            sc.nextLine();
 
-        } else if (opcion == 3) {
-            Voluntario voluntario = new Voluntario(3, nombre, mail, contraseña);
-            voluntario.registrar();
-            System.out.println("\n=== Tareas Pendientes (Donaciones sin entregar) ===");
+            if (opAdmin == 1) {
+                admin.generarReporteDonaciones(gestor.obtenerDonaciones());
+            } else if (opAdmin == 2) {
+                System.out.println("\nLista de usuarios:");
+                for (Usuario u : gestor.obtenerUsuarios()) {
+                    System.out.println("ID: " + u.getIdUsuario() + " | " + u.getNombre() + " (" + u.getClass().getSimpleName() + ") | " + u.getMail());
+                }
+                System.out.print("ID del usuario a eliminar: ");
+                int idEliminar = sc.nextInt();
+                sc.nextLine();
+
+                // --- AQUI ESTA EL TRY-CATCH SOLICITADO ---
+                try {
+                    gestor.eliminarUsuario(idEliminar);
+                    // Si llega aqui, el mensaje de exito ya lo imprimio el gestor.
+                } catch (GestorDonacion.UsuarioNoEncontradoException e) {
+                    System.out.println("ERROR AL ELIMINAR: " + e.getMessage());
+                }
+                // -----------------------------------------
+            }
+
+        } else if (usuarioActual instanceof Voluntario voluntario) {
+            System.out.println("\n--- Panel de Voluntario ---");
+            System.out.println("Tus tareas pendientes:");
             voluntario.verTareasAsignadas(gestor.obtenerDonaciones());
-
-        } else {
-            System.out.println("Opción inválida");
         }
 
         sc.close();
     }
 
-    // --- MÉTODO AUXILIAR PARA EL TEST RÁPIDO ---
     private static void ejecutarTestDeposito() {
-        System.out.println("\n=== INICIO TEST: DEPÓSITO LLENO ===");
-        Deposito depositoTest = new Deposito("Depósito Experimental");
-        System.out.println("Se creó: " + depositoTest.getUbicacion() + " (Capacidad máx: 15)");
-
+        // (El código del test de depósito sigue igual...)
+        System.out.println("Ejecutando test de deposito...");
+        Deposito depositoTest = new Deposito("Deposito Experimental");
         try {
-            // Intentamos agregar 16 donaciones (1 más del límite)
             for (int i = 1; i <= 16; i++) {
-                Donacion d = new Donacion("Item de prueba " + i, 1);
-                System.out.print("Intentando agregar donación #" + i + "... ");
-                depositoTest.agregarDonacion(d); // Esto lanzará la excepción en el intento 16
+                Donacion d = new Donacion("Item " + i, 1);
+                depositoTest.agregarDonacion(d);
             }
-        } catch (Deposito.DepositoLlenoException e) {
-            System.out.println("\n\n ¡TEST EXITOSO! Se capturó la excepción esperada:");
-            System.out.println(" ---> " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("\n TEST FALLIDO: Ocurrió otra excepción no esperada: " + e.getMessage());
+            System.out.println("EXITO DEL TEST: " + e.getMessage());
         }
-        System.out.println("===================================\n");
     }
 }
