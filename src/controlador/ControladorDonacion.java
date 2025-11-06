@@ -1,9 +1,8 @@
 package controlador;
 
-import modelo.Donacion;
+import modelo.*;
 import modelo.datos.GestorDonacion;
 import vista.FormRegistrarDonacion;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,7 +14,6 @@ public class ControladorDonacion implements ActionListener {
     public ControladorDonacion(FormRegistrarDonacion vista) {
         this.vista = vista;
         this.gestor = new GestorDonacion();
-
         vista.getBtnRegistrarDonacion().addActionListener(this);
     }
 
@@ -25,26 +23,23 @@ public class ControladorDonacion implements ActionListener {
             String objeto = vista.getTxtObjetoDonar().getText().trim();
             String cantidadStr = vista.getTxtCantidad().getText().trim();
             String lugar = vista.getTxtLugarEntrega().getText().trim();
+            Campania campaniaSeleccionada = (Campania) vista.getComboBoxCampania().getSelectedItem();
 
-            if (objeto.isEmpty() || cantidadStr.isEmpty() || lugar.isEmpty()) {
-                vista.getLblMensaje().setText("Complete todos los campos.");
+            if (objeto.isEmpty() || cantidadStr.isEmpty() || lugar.isEmpty() || campaniaSeleccionada == null) {
+                vista.getLblMensaje().setText("Complete todos los campos y seleccione una campaña.");
                 return;
             }
 
             try {
                 int cantidad = Integer.parseInt(cantidadStr);
-
-                // Esto ahora puede lanzar CantidadInvalidaException
                 Donacion donacion = new Donacion(objeto, cantidad);
-
+                donacion.asignarCampania(campaniaSeleccionada);
                 gestor.guardarDonacion(donacion);
-                vista.getLblMensaje().setText("✅ Donación registrada con éxito.");
+                vista.getLblMensaje().setText("✅ Donación registrada en " + campaniaSeleccionada.getNombre());
                 vista.limpiarCampos();
-
             } catch (NumberFormatException ex) {
                 vista.getLblMensaje().setText("❌ La cantidad debe ser un número entero.");
             } catch (Donacion.CantidadInvalidaException ex) {
-                // Captura la excepción de negocio anidada
                 vista.getLblMensaje().setText("⚠️ " + ex.getMessage());
             } catch (Exception ex) {
                 System.err.println("Error inesperado: " + ex.getMessage());

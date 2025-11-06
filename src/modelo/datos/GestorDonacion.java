@@ -7,13 +7,11 @@ import java.util.List;
 
 public class GestorDonacion {
 
-    // --- EXCEPCIÓN DE NEGOCIO PARA ELIMINACIÓN ---
     public static class UsuarioNoEncontradoException extends Exception {
         public UsuarioNoEncontradoException(String mensaje) {
             super(mensaje);
         }
     }
-    // --------------------------------------------
 
     private final ConexionDB conexionDB = new ConexionDB();
 
@@ -21,7 +19,6 @@ public class GestorDonacion {
         Donacion.inicializarContador(obtenerMaxIdDonacion());
     }
 
-    // --- DONACIONES (Sin cambios) ---
     public int obtenerMaxIdDonacion() {
         String sql = "SELECT MAX(idDonacion) FROM donacion";
         int maxId = 0;
@@ -38,7 +35,7 @@ public class GestorDonacion {
     }
 
     public void guardarDonacion(Donacion donacion) {
-        String sql = "INSERT INTO donacion (idDonacion, tipoDonacion, cantidad, fecha, estadoDonacion, campania, deposito) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO donacion (idDonacion, tipoDonacion, cantidad, fecha, estadoDonacion, campania) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = conexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, donacion.getIdDonacion());
@@ -47,7 +44,6 @@ public class GestorDonacion {
             ps.setTimestamp(4, Timestamp.valueOf(donacion.getFecha()));
             ps.setString(5, donacion.getEstadoDonacion().toString());
             ps.setString(6, donacion.getCampania() != null ? donacion.getCampania().getNombre() : null);
-            ps.setString(7, donacion.getDeposito() != null ? donacion.getDeposito().getUbicacion() : null);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error al guardar donacion: " + e.getMessage());
@@ -76,8 +72,6 @@ public class GestorDonacion {
         return lista;
     }
 
-    // --- USUARIOS ---
-
     public void guardarUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nombre, mail, contraseña, tipo) VALUES (?, ?, ?, ?)";
         try (Connection conn = conexionDB.conectar();
@@ -94,11 +88,11 @@ public class GestorDonacion {
         }
     }
 
-    public Usuario buscarUsuarioPorMail(String mail) {
-        String sql = "SELECT * FROM usuario WHERE mail = ?";
+    public Usuario buscarUsuarioPorNombre(String nombre) {
+        String sql = "SELECT * FROM usuario WHERE nombre = ?";
         try (Connection conn = conexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, mail);
+            ps.setString(1, nombre);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return crearUsuarioPorTipo(
@@ -115,22 +109,16 @@ public class GestorDonacion {
         return null;
     }
 
-    // METODO MODIFICADO: Ahora lanza la excepción si no encuentra al usuario
     public void eliminarUsuario(int idUsuario) throws UsuarioNoEncontradoException {
         String sql = "DELETE FROM usuario WHERE idUsuario = ?";
         try (Connection conn = conexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, idUsuario);
             int filasAfectadas = ps.executeUpdate();
-
             if (filasAfectadas == 0) {
-                // Si llegamos aqui, es porque el ID no existia en la DB. Lanzamos la excepcion.
                 throw new UsuarioNoEncontradoException("No se encontro ningun usuario con el ID " + idUsuario + " para eliminar.");
             }
-            // Si pasa el if, es que sí se eliminó.
             System.out.println("Usuario con ID " + idUsuario + " eliminado correctamente.");
-
         } catch (SQLException e) {
             System.err.println("Error tecnico al intentar eliminar: " + e.getMessage());
         }

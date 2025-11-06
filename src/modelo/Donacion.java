@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 public class Donacion {
 
-    // Excepción anidada
     public static class CantidadInvalidaException extends Exception {
         public CantidadInvalidaException(String mensaje) {
             super(mensaje);
@@ -18,9 +17,7 @@ public class Donacion {
     private int cantidad;
     private LocalDateTime fecha;
     private Campania campania;
-    private Deposito deposito;
 
-    // --- CONSTRUCTOR PARA NUEVAS DONACIONES (Valida) ---
     public Donacion(String tipoDonacion, int cantidad) throws CantidadInvalidaException {
         if (cantidad <= 0) {
             throw new CantidadInvalidaException("La cantidad debe ser mayor a cero.");
@@ -32,7 +29,6 @@ public class Donacion {
         this.estadoDonacion = EstadoDonacion.PENDIENTE;
     }
 
-    // --- CONSTRUCTOR PARA BASE DE DATOS (Confía en los datos, no valida) ---
     public Donacion(int idDonacion, String tipoDonacion, int cantidad, LocalDateTime fecha, EstadoDonacion estadoDonacion) {
         this.idDonacion = idDonacion;
         this.tipoDonacion = tipoDonacion;
@@ -55,8 +51,6 @@ public class Donacion {
         System.out.println("Estado: " + estadoDonacion);
         if (campania != null)
             System.out.println("Campaña: " + campania.getNombre());
-        if (deposito != null)
-            System.out.println("Depósito: " + deposito.getUbicacion());
         System.out.println("-------------------------");
     }
 
@@ -71,19 +65,12 @@ public class Donacion {
         System.out.println("Donación ID " + idDonacion + " asociada a la campaña " + c.getNombre());
     }
 
-    public void asignarDeposito(Deposito d) {
-        this.deposito = d;
-        d.agregarDonacion(this);
-        System.out.println("Donación ID " + idDonacion + " enviada al depósito " + d.getUbicacion());
-    }
-
     public int getIdDonacion() { return idDonacion; }
     public EstadoDonacion getEstadoDonacion() { return estadoDonacion; }
     public String getTipoDonacion() { return tipoDonacion; }
     public int getCantidad() { return cantidad; }
     public LocalDateTime getFecha() { return fecha; }
     public Campania getCampania() { return campania; }
-    public Deposito getDeposito() { return deposito; }
-    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
     public void setEstadoDonacion(EstadoDonacion estadoDonacion) { this.estadoDonacion = estadoDonacion; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
 }

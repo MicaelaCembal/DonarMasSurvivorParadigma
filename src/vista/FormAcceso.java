@@ -11,14 +11,14 @@ public class FormAcceso extends JFrame {
     private JButton btnIngresar;
     private JLabel lblMensaje;
 
-    public FormAcceso(){
+    public FormAcceso() {
         inicializar();
     }
 
-    private void inicializar(){
+    private void inicializar() {
         setContentPane(pnlPrincipal);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600,400);
+        setSize(600, 400);
         setLocationRelativeTo(null);
         setTitle("Formulario de Acceso");
     }

@@ -6,6 +6,5 @@ public class Main {
         FormAcceso acceso = new FormAcceso();
         new ControladorAcceso(acceso);
         acceso.setVisible(true);
-
     }
 }

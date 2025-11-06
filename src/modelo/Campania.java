@@ -9,14 +9,12 @@ public class Campania implements IAsociable {
     private String nombre;
     private String descripcion;
     private List<Donacion> listaDonaciones;
-
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
 
     public Campania() {
         listaDonaciones = new ArrayList<>();
     }
-
 
     @Override
     public void agregarDonacion(Donacion donacion) {
@@ -32,13 +30,11 @@ public class Campania implements IAsociable {
         return listaDonaciones;
     }
 
-    // Métodos de gestión de donaciones (vistos en el UML)
     public void eliminarDonacion(Donacion d) {
         listaDonaciones.remove(d);
         System.out.println("Donación ID " + d.getIdDonacion() + " eliminada de la campaña " + nombre);
     }
 
-    // Getters y Setters
     public String getNombre() {
         return nombre;
     }
@@ -78,6 +74,9 @@ public class Campania implements IAsociable {
     public void setFechaFin(LocalDateTime fechaFin) {
         this.fechaFin = fechaFin;
     }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }
-
-

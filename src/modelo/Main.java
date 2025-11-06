@@ -32,7 +32,7 @@ public class Main {
         System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
 
-        Usuario usuarioActual = gestor.buscarUsuarioPorMail(mail);
+        Usuario usuarioActual = gestor.buscarUsuarioPorNombre(mail);
 
         if (usuarioActual != null) {
             System.out.println(">>> Usuario encontrado! Bienvenido de nuevo, " + usuarioActual.getNombre());
@@ -54,7 +54,7 @@ public class Main {
                 }
             }
             gestor.guardarUsuario(usuarioActual);
-            usuarioActual = gestor.buscarUsuarioPorMail(mail);
+            usuarioActual = gestor.buscarUsuarioPorNombre(mail);
         }
 
         if (usuarioActual instanceof Donante donante) {
