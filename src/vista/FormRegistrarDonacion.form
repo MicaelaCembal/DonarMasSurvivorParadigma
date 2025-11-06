@@ -144,6 +144,7 @@
         <properties>
           <background color="-11466822"/>
           <editable value="false"/>
+          <foreground color="-394241"/>
         </properties>
       </component>
     </children>

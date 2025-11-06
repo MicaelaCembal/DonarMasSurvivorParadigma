@@ -27,7 +27,7 @@ public class FormRegistrarDonacion extends JFrame {
         setTitle("Registrar Donación");
     }
 
-    private void cargarCampanias() {
+    private void cargarCampanias() { //
         Campania c1 = new Campania();
         c1.setIdCampania(1);
         c1.setNombre("Campaña de Invierno 2025");
