@@ -8,11 +8,13 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-
         ConexionDB conexionDB = new ConexionDB();
         conexionDB.crearBaseYTablas();
+
+        // Instanciamos ambos gestores
         GestorDonacion gestorDonacion = new GestorDonacion();
         GestorUsuario gestorUsuario = new GestorUsuario();
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println("=== Bienvenido al Sistema de Donaciones ===");
@@ -20,22 +22,9 @@ public class Main {
         System.out.println("2. Administrador");
         System.out.println("3. Voluntario");
         System.out.println("4. Test Rapido: Deposito Lleno");
-
-        int opcion = 0;
-        boolean opcionValida = false;
-        while (!opcionValida) {
-            System.out.print("Elegi una opcion: ");
-            try {
-                opcion = Integer.parseInt(sc.nextLine());
-                if (opcion >= 1 && opcion <= 4) {
-                    opcionValida = true;
-                } else {
-                    System.out.println("Opción inválida. Ingresá un número entre 1 y 4.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Ingresá un número.");
-            }
-        }
+        System.out.print("Elegi una opcion: ");
+        int opcion = sc.nextInt();
+        sc.nextLine(); // Consumir salto de linea
 
         if (opcion == 4) {
             ejecutarTestDeposito();
@@ -43,13 +32,12 @@ public class Main {
             return;
         }
 
+        // --- LOGIN / REGISTRO ---
         System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
         Usuario usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
 
-        if (usuarioActual != null) {
-            System.out.println(">>> Bienvenido de nuevo, " + usuarioActual.getNombre());
-        } else {
+        if (usuarioActual == null) {
             System.out.println(">>> Usuario nuevo. Completa tu registro.");
             System.out.print("Nombre: ");
             String nombre = sc.nextLine();
@@ -60,95 +48,125 @@ public class Main {
                 case 1 -> usuarioActual = new Donante(0, nombre, mail, contraseña);
                 case 2 -> usuarioActual = new Administrador(0, nombre, mail, contraseña);
                 case 3 -> usuarioActual = new Voluntario(0, nombre, mail, contraseña);
+                default -> {
+                    System.out.println("Opcion invalida. Saliendo.");
+                    sc.close();
+                    return;
+                }
             }
-
             gestorUsuario.guardarUsuario(usuarioActual);
-            usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
+            usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail); // Recargar ID real
         }
+        System.out.println("Hola, " + usuarioActual.getNombre() + " (" + usuarioActual.getClass().getSimpleName() + ")");
+
+        // --- MENUS SEGUN ROL ---
 
         if (usuarioActual instanceof Donante donante) {
             System.out.println("\n--- Panel de Donante ---");
-            System.out.println("¿Deseas realizar una nueva donacion? (S/N)");
+            System.out.print("¿Nueva donacion? (S/N): ");
             if (sc.nextLine().equalsIgnoreCase("S")) {
-                System.out.print("Tipo de donacion: ");
+                System.out.print("Tipo (ej. Ropa): ");
                 String tipo = sc.nextLine();
-                int cantidad = 0;
-                boolean cantidadValida = false;
-                while (!cantidadValida) {
-                    System.out.print("Cantidad: ");
-                    try {
-                        cantidad = Integer.parseInt(sc.nextLine());
-                        if (cantidad <= 0) {
-                            System.out.println("Debe ser un número positivo.");
-                        } else {
-                            cantidadValida = true;
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Entrada inválida. Por favor, ingresá un número.");
-                    }
-                }
-                System.out.print("Lugar de entrega (nombre del deposito): ");
-                String nombreDeposito = sc.nextLine();
+                System.out.print("Cantidad: ");
+                int cant = sc.nextInt();
+                sc.nextLine(); // Consumir enter
+
+                // Opcionales
+                System.out.print("Nombre Deposito: ");
+                String nomDep = sc.nextLine();
+                System.out.print("Nombre Campaña: ");
+                String nomCamp = sc.nextLine();
+
                 try {
-                    Donacion d = new Donacion(tipo, cantidad);
-                    d.asignarDeposito(new Deposito(nombreDeposito));
+                    Donacion d = new Donacion(tipo, cant);
+
+                    // Asignar deposito si el usuario escribio algo
+                    if (!nomDep.isEmpty()) {
+                        d.asignarDeposito(new Deposito(nomDep));
+                    }
+                    // Asignar campaña si el usuario escribio algo
+                    if (!nomCamp.isEmpty()) {
+                        Campania c = new Campania();
+                        c.setNombre(nomCamp);
+                        d.asignarCampania(c);
+                    }
+
                     gestorDonacion.guardarDonacion(d);
                     donante.realizarDonacion(d);
-                    System.out.println("Donacion registrada con exito.");
-                    System.out.println("\n--- Estado del Deposito Destino ---");
-                    d.getDeposito().mostrarInventario();
+                    System.out.println("¡Gracias! Donacion registrada con exito.");
+
+                    if (d.getDeposito() != null) {
+                        d.getDeposito().mostrarInventario();
+                    }
+
                 } catch (Exception e) {
-                    System.out.println("No se pudo registrar: " + e.getMessage());
+                    System.out.println("Error al registrar: " + e.getMessage());
                 }
             }
+
         } else if (usuarioActual instanceof Administrador admin) {
             System.out.println("\n--- Panel de Administrador ---");
-            int opAdmin = 0;
-            boolean adminValido = false;
-            while (!adminValido) {
-                System.out.println("1. Ver Reporte General");
-                System.out.println("2. Eliminar Usuario");
-                System.out.print("Elegi una opcion: ");
-                try {
-                    opAdmin = Integer.parseInt(sc.nextLine());
-                    if (opAdmin == 1 || opAdmin == 2) {
-                        adminValido = true;
-                    } else {
-                        System.out.println("Opcion invalida. Ingresá 1 o 2.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Entrada inválida. Ingresá un número.");
-                }
-            }
+            System.out.println("1. Ver Reporte General");
+            System.out.println("2. Eliminar Usuario");
+            System.out.print("Opcion: ");
+            int opAdmin = sc.nextInt();
             if (opAdmin == 1) {
                 admin.generarReporteDonaciones(gestorDonacion.obtenerDonaciones());
-            } else if (opAdmin == 2) {
-                System.out.println("\nLista de usuarios:");
-                for (Usuario u : gestorUsuario.obtenerUsuarios()) {
-                    System.out.println("ID: " + u.getIdUsuario() + " | " + u.getNombre() +
-                            " (" + u.getClass().getSimpleName() + ") | " + u.getMail());
-                }
-                int idEliminar = 0;
-                boolean idValido = false;
-                while (!idValido) {
-                    System.out.print("ID del usuario a eliminar: ");
-                    try {
-                        idEliminar = Integer.parseInt(sc.nextLine());
-                        idValido = true;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Entrada inválida. Ingresá un número.");
-                    }
-                }
+            } else {
+                System.out.println("Lista de usuarios:");
+                gestorUsuario.obtenerUsuarios().forEach(u -> System.out.println("#" + u.getIdUsuario() + " " + u.getNombre() + " (" + u.getMail() + ")"));
+                System.out.print("ID a eliminar: ");
                 try {
-                    gestorUsuario.eliminarUsuario(idEliminar);
-                } catch (GestorUsuario.UsuarioNoEncontradoException e) {
-                    System.out.println("Error: " + e.getMessage());
+                    gestorUsuario.eliminarUsuario(sc.nextInt());
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
             }
+
         } else if (usuarioActual instanceof Voluntario voluntario) {
             System.out.println("\n--- Panel de Voluntario ---");
-            System.out.println("Tus tareas pendientes:");
-            voluntario.verTareasAsignadas(gestorDonacion.obtenerDonaciones());
+            List<Donacion> donaciones = gestorDonacion.obtenerDonaciones();
+            voluntario.verTareasAsignadas(donaciones);
+
+            System.out.println("\n¿Deseas gestionar el estado de una donacion? (S/N)");
+            if (sc.nextLine().equalsIgnoreCase("S")) {
+                System.out.print("Ingresa el ID de la donacion a actualizar: ");
+                int idDon = sc.nextInt();
+                System.out.println("Selecciona el nuevo estado:");
+                System.out.println("1. EN_CAMINO");
+                System.out.println("2. ENTREGADO");
+                System.out.println("3. CANCELADO");
+                System.out.println("4. APROBADA");
+                System.out.print("Opcion: ");
+                int opEstado = sc.nextInt();
+
+                EstadoDonacion nuevoEstado = switch (opEstado) {
+                    case 1 -> EstadoDonacion.EN_CAMINO;
+                    case 2 -> EstadoDonacion.ENTREGADO;
+                    case 3 -> EstadoDonacion.CANCELADO;
+                    case 4 -> EstadoDonacion.APROBADA;
+                    default -> EstadoDonacion.PENDIENTE;
+                };
+
+                if (nuevoEstado != EstadoDonacion.PENDIENTE) {
+                    boolean encontrada = false;
+                    for (Donacion d : donaciones) {
+                        if (d.getIdDonacion() == idDon) {
+                            // Actualiza en memoria (usa el metodo de Voluntario)
+                            voluntario.registrarActualizacionEstado(d, nuevoEstado);
+                            // Actualiza en DB (usa el Gestor)
+                            gestorDonacion.actualizarEstadoDonacionDB(idDon, nuevoEstado);
+                            encontrada = true;
+                            break;
+                        }
+                    }
+                    if (!encontrada) {
+                        System.out.println("No se encontro una donacion con ese ID.");
+                    }
+                } else {
+                    System.out.println("Opcion de estado invalida o sin cambios.");
+                }
+            }
         }
 
         sc.close();

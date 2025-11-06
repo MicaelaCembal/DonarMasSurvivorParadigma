@@ -47,6 +47,17 @@ public class GestorDonacion {
         }
     }
 
+    public void actualizarEstadoDonacionDB(int idDonacion, EstadoDonacion nuevoEstado) {
+        String sql = "UPDATE donacion SET estadoDonacion = ? WHERE idDonacion = ?";
+        try (Connection conn = conexionDB.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado.toString());
+            ps.setInt(2, idDonacion);
+            if (ps.executeUpdate() > 0) System.out.println("Estado actualizado en DB.");
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar estado: " + e.getMessage());
+        }
+    }
     public List<Donacion> obtenerDonaciones() {
         List<Donacion> lista = new ArrayList<>();
         String sql = "SELECT * FROM donacion";

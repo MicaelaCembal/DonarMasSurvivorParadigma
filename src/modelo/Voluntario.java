@@ -8,20 +8,25 @@ public class Voluntario extends Usuario {
         super(idUsuario, nombre, mail, contraseña);
     }
 
-    public void registrarEntrega(Donacion d) {
-        d.actualizarEstadoDonacion(EstadoDonacion.ENTREGADO);
-        System.out.println("Voluntario " + nombre + " registró la entrega de donación ID " + d.getIdDonacion());
+
+    public void registrarActualizacionEstado(Donacion d, EstadoDonacion nuevoEstado) {
+        d.actualizarEstadoDonacion(nuevoEstado);
+        System.out.println(" Voluntario " + nombre + " registro el cambio de estado de la donacion ID " + d.getIdDonacion() + " a " + nuevoEstado);
     }
 
-    public void clasificarDonacion(Donacion d) {
-        System.out.println("Voluntario " + nombre + " clasificó la donación ID " + d.getIdDonacion());
-    }
 
-    public void verTareasAsignadas(List<Donacion> donacionesPendientes) {
-        System.out.println("Tareas pendientes de " + nombre + ":");
-        for (Donacion d : donacionesPendientes) {
-            if (d.getEstadoDonacion() == EstadoDonacion.PENDIENTE)
-                System.out.println("- Donación ID " + d.getIdDonacion());
+    public void verTareasAsignadas(List<Donacion> donaciones) {
+        System.out.println("--- Tareas Pendientes (Donaciones por gestionar) ---");
+        boolean hayTareas = false;
+        for (Donacion d : donaciones) {
+            if (d.getEstadoDonacion() == EstadoDonacion.PENDIENTE || d.getEstadoDonacion() == EstadoDonacion.EN_CAMINO) {
+                System.out.println("ID: " + d.getIdDonacion() + " | Tipo: " + d.getTipoDonacion() + " | Cant: " + d.getCantidad() + " | Estado Actual: " + d.getEstadoDonacion());
+                hayTareas = true;
+            }
         }
+        if (!hayTareas) {
+            System.out.println("¡No hay tareas pendientes!");
+        }
+        System.out.println("----------------------------------------------------");
     }
 }
