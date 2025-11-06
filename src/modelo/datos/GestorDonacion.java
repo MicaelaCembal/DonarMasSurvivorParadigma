@@ -35,7 +35,7 @@ public class GestorDonacion {
     }
 
     public void guardarDonacion(Donacion donacion) {
-        String sql = "INSERT INTO donacion (idDonacion, tipoDonacion, cantidad, fecha, estadoDonacion, campania) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO donacion (idDonacion, tipoDonacion, cantidad, fecha, estadoDonacion, campania, deposito) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = conexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, donacion.getIdDonacion());
@@ -44,6 +44,7 @@ public class GestorDonacion {
             ps.setTimestamp(4, Timestamp.valueOf(donacion.getFecha()));
             ps.setString(5, donacion.getEstadoDonacion().toString());
             ps.setString(6, donacion.getCampania() != null ? donacion.getCampania().getNombre() : null);
+            ps.setString(7, donacion.getDeposito());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error al guardar donacion: " + e.getMessage());
@@ -64,6 +65,7 @@ public class GestorDonacion {
                         rs.getTimestamp("fecha").toLocalDateTime(),
                         EstadoDonacion.valueOf(rs.getString("estadoDonacion"))
                 );
+                d.setDeposito(rs.getString("deposito"));
                 lista.add(d);
             }
         } catch (SQLException e) {

@@ -34,4 +34,5 @@ public class Administrador extends Usuario {
         for (Donacion d : donaciones)
             d.mostrarDonacion();
     }
+
 }

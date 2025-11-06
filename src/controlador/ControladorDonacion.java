@@ -34,6 +34,7 @@ public class ControladorDonacion implements ActionListener {
                 int cantidad = Integer.parseInt(cantidadStr);
                 Donacion donacion = new Donacion(objeto, cantidad);
                 donacion.asignarCampania(campaniaSeleccionada);
+                donacion.setDeposito(lugar);
                 gestor.guardarDonacion(donacion);
                 vista.getLblMensaje().setText("✅ Donación registrada en " + campaniaSeleccionada.getNombre());
                 vista.limpiarCampos();

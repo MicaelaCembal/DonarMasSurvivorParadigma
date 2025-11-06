@@ -27,7 +27,7 @@ public class FormRegistrarDonacion extends JFrame {
         setTitle("Registrar Donación");
     }
 
-    private void cargarCampanias() { //
+    private void cargarCampanias() {
         Campania c1 = new Campania();
         c1.setIdCampania(1);
         c1.setNombre("Campaña de Invierno 2025");
@@ -43,14 +43,32 @@ public class FormRegistrarDonacion extends JFrame {
         comboBoxCampania.addItem(c1);
         comboBoxCampania.addItem(c2);
         comboBoxCampania.addItem(c3);
+        comboBoxCampania.setSelectedIndex(-1);
     }
 
-    public JButton getBtnRegistrarDonacion() { return btnRegistrarDonacion; }
-    public JTextField getTxtObjetoDonar() { return txtObjetoDonar; }
-    public JTextField getTxtCantidad() { return txtCantidad; }
-    public JTextField getTxtLugarEntrega() { return txtLugarEntrega; }
-    public JLabel getLblMensaje() { return lblMensaje; }
-    public JComboBox<Campania> getComboBoxCampania() { return comboBoxCampania; }
+    public JButton getBtnRegistrarDonacion() {
+        return btnRegistrarDonacion;
+    }
+
+    public JTextField getTxtObjetoDonar() {
+        return txtObjetoDonar;
+    }
+
+    public JTextField getTxtCantidad() {
+        return txtCantidad;
+    }
+
+    public JTextField getTxtLugarEntrega() {
+        return txtLugarEntrega;
+    }
+
+    public JLabel getLblMensaje() {
+        return lblMensaje;
+    }
+
+    public JComboBox<Campania> getComboBoxCampania() {
+        return comboBoxCampania;
+    }
 
     public void limpiarCampos() {
         txtObjetoDonar.setText("");

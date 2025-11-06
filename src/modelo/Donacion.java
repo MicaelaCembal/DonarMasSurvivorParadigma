@@ -3,26 +3,27 @@ package modelo;
 import java.time.LocalDateTime;
 
 public class Donacion {
+    private static int contadorId = 0;
 
-    public static class CantidadInvalidaException extends Exception {
+    private int idDonacion;
+    private String tipoDonacion;
+    private int cantidad;
+    private String deposito;
+    private Campania campania;
+    private LocalDateTime fecha;
+    private EstadoDonacion estadoDonacion;
+
+    public static class CantidadInvalidaException extends RuntimeException {
         public CantidadInvalidaException(String mensaje) {
             super(mensaje);
         }
     }
 
-    private static int contadorDonaciones = 0;
-    private int idDonacion;
-    private EstadoDonacion estadoDonacion;
-    private String tipoDonacion;
-    private int cantidad;
-    private LocalDateTime fecha;
-    private Campania campania;
-
-    public Donacion(String tipoDonacion, int cantidad) throws CantidadInvalidaException {
+    public Donacion(String tipoDonacion, int cantidad) {
         if (cantidad <= 0) {
             throw new CantidadInvalidaException("La cantidad debe ser mayor a cero.");
         }
-        this.idDonacion = ++contadorDonaciones;
+        this.idDonacion = ++contadorId;
         this.tipoDonacion = tipoDonacion;
         this.cantidad = cantidad;
         this.fecha = LocalDateTime.now();
@@ -37,40 +38,38 @@ public class Donacion {
         this.estadoDonacion = estadoDonacion;
     }
 
-    public static void inicializarContador(int maxIdExistente) {
-        if (maxIdExistente > contadorDonaciones) {
-            contadorDonaciones = maxIdExistente;
-        }
-    }
-
-    public void mostrarDonacion() {
-        System.out.println("=== Donación ID " + idDonacion + " ===");
-        System.out.println("Tipo: " + tipoDonacion);
-        System.out.println("Cantidad: " + cantidad);
-        System.out.println("Fecha: " + fecha);
-        System.out.println("Estado: " + estadoDonacion);
-        if (campania != null)
-            System.out.println("Campaña: " + campania.getNombre());
-        System.out.println("-------------------------");
+    public static void inicializarContador(int valor) {
+        contadorId = valor;
     }
 
     public void actualizarEstadoDonacion(EstadoDonacion nuevoEstado) {
         this.estadoDonacion = nuevoEstado;
-        System.out.println("Donación ID " + idDonacion + " actualizada a estado: " + nuevoEstado);
     }
-
-    public void asignarCampania(Campania c) {
-        this.campania = c;
-        c.agregarDonacion(this);
-        System.out.println("Donación ID " + idDonacion + " asociada a la campaña " + c.getNombre());
+    public void mostrarDonacion() {
+        System.out.println("=== Donación ID " + idDonacion + " ===");
+        System.out.println("Tipo: " + tipoDonacion);
+        System.out.println("Cantidad: " + cantidad);
+        System.out.println("Lugar de entrega: " + deposito);
+        System.out.println("Estado: " + estadoDonacion);
+        System.out.println("Fecha: " + fecha);
+        if (campania != null) {
+            System.out.println("Campaña: " + campania.getNombre());
+        }
+        System.out.println("------------------------------");
     }
 
     public int getIdDonacion() { return idDonacion; }
-    public EstadoDonacion getEstadoDonacion() { return estadoDonacion; }
+    public void setIdDonacion(int idDonacion) { this.idDonacion = idDonacion; }
     public String getTipoDonacion() { return tipoDonacion; }
+    public void setTipoDonacion(String tipoDonacion) { this.tipoDonacion = tipoDonacion; }
     public int getCantidad() { return cantidad; }
-    public LocalDateTime getFecha() { return fecha; }
-    public Campania getCampania() { return campania; }
-    public void setEstadoDonacion(EstadoDonacion estadoDonacion) { this.estadoDonacion = estadoDonacion; }
     public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+    public String getDeposito() { return deposito; }
+    public void setDeposito(String deposito) { this.deposito = deposito; }
+    public Campania getCampania() { return campania; }
+    public void asignarCampania(Campania campania) { this.campania = campania; }
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    public EstadoDonacion getEstadoDonacion() { return estadoDonacion; }
+    public void setEstadoDonacion(EstadoDonacion estadoDonacion) { this.estadoDonacion = estadoDonacion; }
 }
