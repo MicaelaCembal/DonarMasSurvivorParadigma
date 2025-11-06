@@ -3,6 +3,7 @@ package modelo;
 import java.util.Scanner;
 import modelo.datos.ConexionDB;
 import modelo.datos.GestorDonacion;
+import modelo.datos.GestorUsuario;
 import java.util.List;
 
 public class Main {
@@ -10,8 +11,8 @@ public class Main {
 
         ConexionDB conexionDB = new ConexionDB();
         conexionDB.crearBaseYTablas();
-        GestorDonacion gestor = new GestorDonacion();
-
+        GestorDonacion gestorDonacion = new GestorDonacion();
+        GestorUsuario gestorUsuario = new GestorUsuario();
         Scanner sc = new Scanner(System.in);
 
         System.out.println("=== Bienvenido al Sistema de Donaciones ===");
@@ -44,8 +45,7 @@ public class Main {
 
         System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
-
-        Usuario usuarioActual = gestor.buscarUsuarioPorMail(mail);
+        Usuario usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
 
         if (usuarioActual != null) {
             System.out.println(">>> Bienvenido de nuevo, " + usuarioActual.getNombre());
@@ -62,18 +62,16 @@ public class Main {
                 case 3 -> usuarioActual = new Voluntario(0, nombre, mail, contraseña);
             }
 
-            gestor.guardarUsuario(usuarioActual);
-            usuarioActual = gestor.buscarUsuarioPorMail(mail);
+            gestorUsuario.guardarUsuario(usuarioActual);
+            usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
         }
 
-        // --- MENU SEGUN TIPO DE USUARIO ---
         if (usuarioActual instanceof Donante donante) {
             System.out.println("\n--- Panel de Donante ---");
             System.out.println("¿Deseas realizar una nueva donacion? (S/N)");
             if (sc.nextLine().equalsIgnoreCase("S")) {
                 System.out.print("Tipo de donacion: ");
                 String tipo = sc.nextLine();
-
                 int cantidad = 0;
                 boolean cantidadValida = false;
                 while (!cantidadValida) {
@@ -89,14 +87,12 @@ public class Main {
                         System.out.println("Entrada inválida. Por favor, ingresá un número.");
                     }
                 }
-
                 System.out.print("Lugar de entrega (nombre del deposito): ");
                 String nombreDeposito = sc.nextLine();
-
                 try {
                     Donacion d = new Donacion(tipo, cantidad);
                     d.asignarDeposito(new Deposito(nombreDeposito));
-                    gestor.guardarDonacion(d);
+                    gestorDonacion.guardarDonacion(d);
                     donante.realizarDonacion(d);
                     System.out.println("Donacion registrada con exito.");
                     System.out.println("\n--- Estado del Deposito Destino ---");
@@ -105,10 +101,8 @@ public class Main {
                     System.out.println("No se pudo registrar: " + e.getMessage());
                 }
             }
-
         } else if (usuarioActual instanceof Administrador admin) {
             System.out.println("\n--- Panel de Administrador ---");
-
             int opAdmin = 0;
             boolean adminValido = false;
             while (!adminValido) {
@@ -126,16 +120,14 @@ public class Main {
                     System.out.println("Entrada inválida. Ingresá un número.");
                 }
             }
-
             if (opAdmin == 1) {
-                admin.generarReporteDonaciones(gestor.obtenerDonaciones());
+                admin.generarReporteDonaciones(gestorDonacion.obtenerDonaciones());
             } else if (opAdmin == 2) {
                 System.out.println("\nLista de usuarios:");
-                for (Usuario u : gestor.obtenerUsuarios()) {
+                for (Usuario u : gestorUsuario.obtenerUsuarios()) {
                     System.out.println("ID: " + u.getIdUsuario() + " | " + u.getNombre() +
                             " (" + u.getClass().getSimpleName() + ") | " + u.getMail());
                 }
-
                 int idEliminar = 0;
                 boolean idValido = false;
                 while (!idValido) {
@@ -147,18 +139,16 @@ public class Main {
                         System.out.println("Entrada inválida. Ingresá un número.");
                     }
                 }
-
                 try {
-                    gestor.eliminarUsuario(idEliminar);
-                } catch (GestorDonacion.UsuarioNoEncontradoException e) {
+                    gestorUsuario.eliminarUsuario(idEliminar);
+                } catch (GestorUsuario.UsuarioNoEncontradoException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
             }
-
         } else if (usuarioActual instanceof Voluntario voluntario) {
             System.out.println("\n--- Panel de Voluntario ---");
             System.out.println("Tus tareas pendientes:");
-            voluntario.verTareasAsignadas(gestor.obtenerDonaciones());
+            voluntario.verTareasAsignadas(gestorDonacion.obtenerDonaciones());
         }
 
         sc.close();
