@@ -99,6 +99,8 @@ public class Main {
                     gestor.guardarDonacion(d);
                     donante.realizarDonacion(d);
                     System.out.println("Donacion registrada con exito.");
+                    System.out.println("\n--- Estado del Deposito Destino ---");
+                    d.getDeposito().mostrarInventario();
                 } catch (Exception e) {
                     System.out.println("No se pudo registrar: " + e.getMessage());
                 }

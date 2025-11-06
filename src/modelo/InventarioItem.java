@@ -9,6 +9,12 @@ public class InventarioItem {
         this.cantidad = cantidad;
     }
 
+
+    public void sumarCantidad(int cantidadAdicional) {
+        this.cantidad += cantidadAdicional;
+    }
+
+
     public int getCantidad() {
         return cantidad;
     }

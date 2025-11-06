@@ -5,14 +5,13 @@ import java.util.List;
 
 public class Deposito implements IAsociable {
 
-
     public static class DepositoLlenoException extends RuntimeException {
         public DepositoLlenoException(String mensaje) {
             super(mensaje);
         }
     }
 
-    protected static final int CAPACIDAD_MAXIMA = 15;
+    static final int CAPACIDAD_MAXIMA = 15;
 
     private int idDeposito;
     private String ubicacion;
@@ -31,7 +30,6 @@ public class Deposito implements IAsociable {
     }
 
     @Override
-
     public void agregarDonacion(Donacion donacion) throws DepositoLlenoException {
         if (!verificarEstadoDisponible()) {
             throw new DepositoLlenoException("El depósito '" + this.ubicacion +
@@ -49,6 +47,7 @@ public class Deposito implements IAsociable {
         boolean encontrado = false;
         for (InventarioItem item : inventario) {
             if (item.getDescripcion().equalsIgnoreCase(donacion.getTipoDonacion())) {
+                item.sumarCantidad(donacion.getCantidad()); // Usamos el nuevo método
                 encontrado = true;
                 break;
             }
@@ -58,6 +57,7 @@ public class Deposito implements IAsociable {
             inventario.add(new InventarioItem(donacion.getTipoDonacion(), donacion.getCantidad()));
         }
     }
+
 
     public boolean verificarEstadoDisponible() {
         return listaDonaciones.size() < CAPACIDAD_MAXIMA;
@@ -69,7 +69,7 @@ public class Deposito implements IAsociable {
             System.out.println("El inventario está vacío.");
         } else {
             for (InventarioItem item : inventario) {
-                System.out.println("- " + item.getDescripcion() + ": " + item.getCantidad());
+                System.out.println("- " + item.getDescripcion() + ": " + item.getCantidad() + " unidades totales.");
             }
         }
         System.out.println("------------------------------------");
@@ -80,21 +80,20 @@ public class Deposito implements IAsociable {
         return "Depósito: " + ubicacion;
     }
 
-    // Getters y Setters
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
     public List<Donacion> getListaDonaciones() {
         return listaDonaciones;
     }
 
     public List<InventarioItem> getInventario() {
         return inventario;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 
     public int getIdDeposito() {
