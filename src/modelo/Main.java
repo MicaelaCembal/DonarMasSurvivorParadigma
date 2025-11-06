@@ -19,9 +19,22 @@ public class Main {
         System.out.println("2. Administrador");
         System.out.println("3. Voluntario");
         System.out.println("4. Test Rapido: Deposito Lleno");
-        System.out.print("Elegi una opcion: ");
-        int opcion = sc.nextInt();
-        sc.nextLine(); // Consumir salto de linea
+
+        int opcion = 0;
+        boolean opcionValida = false;
+        while (!opcionValida) {
+            System.out.print("Elegi una opcion: ");
+            try {
+                opcion = Integer.parseInt(sc.nextLine());
+                if (opcion >= 1 && opcion <= 4) {
+                    opcionValida = true;
+                } else {
+                    System.out.println("Opción inválida. Ingresá un número entre 1 y 4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Ingresá un número.");
+            }
+        }
 
         if (opcion == 4) {
             ejecutarTestDeposito();
@@ -47,36 +60,42 @@ public class Main {
                 case 1 -> usuarioActual = new Donante(0, nombre, mail, contraseña);
                 case 2 -> usuarioActual = new Administrador(0, nombre, mail, contraseña);
                 case 3 -> usuarioActual = new Voluntario(0, nombre, mail, contraseña);
-                default -> {
-                    System.out.println("Opcion invalida. Saliendo.");
-                    sc.close();
-                    return;
-                }
             }
+
             gestor.guardarUsuario(usuarioActual);
-            // Recargamos para tener el ID real de la DB
             usuarioActual = gestor.buscarUsuarioPorMail(mail);
         }
 
         // --- MENU SEGUN TIPO DE USUARIO ---
-
         if (usuarioActual instanceof Donante donante) {
             System.out.println("\n--- Panel de Donante ---");
             System.out.println("¿Deseas realizar una nueva donacion? (S/N)");
             if (sc.nextLine().equalsIgnoreCase("S")) {
                 System.out.print("Tipo de donacion: ");
                 String tipo = sc.nextLine();
-                System.out.print("Cantidad: ");
-                int cantidad = sc.nextInt();
-                sc.nextLine();
+
+                int cantidad = 0;
+                boolean cantidadValida = false;
+                while (!cantidadValida) {
+                    System.out.print("Cantidad: ");
+                    try {
+                        cantidad = Integer.parseInt(sc.nextLine());
+                        if (cantidad <= 0) {
+                            System.out.println("Debe ser un número positivo.");
+                        } else {
+                            cantidadValida = true;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrada inválida. Por favor, ingresá un número.");
+                    }
+                }
+
                 System.out.print("Lugar de entrega (nombre del deposito): ");
                 String nombreDeposito = sc.nextLine();
 
                 try {
                     Donacion d = new Donacion(tipo, cantidad);
-                    // Creamos un objeto deposito temporal con ese nombre para asignarlo
                     d.asignarDeposito(new Deposito(nombreDeposito));
-
                     gestor.guardarDonacion(d);
                     donante.realizarDonacion(d);
                     System.out.println("Donacion registrada con exito.");
@@ -87,22 +106,46 @@ public class Main {
 
         } else if (usuarioActual instanceof Administrador admin) {
             System.out.println("\n--- Panel de Administrador ---");
-            System.out.println("1. Ver Reporte General");
-            System.out.println("2. Eliminar Usuario");
-            System.out.print("Elegi una opcion: ");
-            int opAdmin = sc.nextInt();
-            sc.nextLine();
+
+            int opAdmin = 0;
+            boolean adminValido = false;
+            while (!adminValido) {
+                System.out.println("1. Ver Reporte General");
+                System.out.println("2. Eliminar Usuario");
+                System.out.print("Elegi una opcion: ");
+                try {
+                    opAdmin = Integer.parseInt(sc.nextLine());
+                    if (opAdmin == 1 || opAdmin == 2) {
+                        adminValido = true;
+                    } else {
+                        System.out.println("Opcion invalida. Ingresá 1 o 2.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Entrada inválida. Ingresá un número.");
+                }
+            }
 
             if (opAdmin == 1) {
                 admin.generarReporteDonaciones(gestor.obtenerDonaciones());
             } else if (opAdmin == 2) {
                 System.out.println("\nLista de usuarios:");
                 for (Usuario u : gestor.obtenerUsuarios()) {
-                    System.out.println("ID: " + u.getIdUsuario() + " | " + u.getNombre() + " (" + u.getClass().getSimpleName() + ") | " + u.getMail());
+                    System.out.println("ID: " + u.getIdUsuario() + " | " + u.getNombre() +
+                            " (" + u.getClass().getSimpleName() + ") | " + u.getMail());
                 }
-                System.out.print("ID del usuario a eliminar: ");
-                int idEliminar = sc.nextInt();
-                sc.nextLine();
+
+                int idEliminar = 0;
+                boolean idValido = false;
+                while (!idValido) {
+                    System.out.print("ID del usuario a eliminar: ");
+                    try {
+                        idEliminar = Integer.parseInt(sc.nextLine());
+                        idValido = true;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Entrada inválida. Ingresá un número.");
+                    }
+                }
+
                 try {
                     gestor.eliminarUsuario(idEliminar);
                 } catch (GestorDonacion.UsuarioNoEncontradoException e) {
@@ -123,7 +166,7 @@ public class Main {
         System.out.println("\n=== INICIO TEST: DEPOSITO LLENO ===");
         Deposito depositoTest = new Deposito("Deposito Experimental");
         try {
-            for (int i = 1; i <= Deposito.CAPACIDAD_MAXIMA +1; i++) {
+            for (int i = 1; i <= 16; i++) {
                 Donacion d = new Donacion("Item " + i, 1);
                 depositoTest.agregarDonacion(d);
             }
