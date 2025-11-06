@@ -13,7 +13,7 @@ public class Deposito implements IAsociable {
 
     static final int CAPACIDAD_MAXIMA = 15;
 
-    private int idDeposito;
+    private int idDeposito;  // no fue utilizado pero seria para hacer la tabla de depositos
     private String ubicacion;
     private List<Donacion> listaDonaciones;
     private List<InventarioItem> inventario;
@@ -92,9 +92,6 @@ public class Deposito implements IAsociable {
         return ubicacion;
     }
 
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
-    }
 
     public int getIdDeposito() {
         return idDeposito;

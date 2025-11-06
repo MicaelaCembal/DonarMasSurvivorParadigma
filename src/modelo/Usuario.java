@@ -52,6 +52,7 @@ public abstract class Usuario implements IRegistrable {
     }
 
     public void setContraseña(String contraseña) {
+
         this.contraseña = contraseña;
     }
 

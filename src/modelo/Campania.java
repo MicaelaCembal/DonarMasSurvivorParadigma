@@ -30,7 +30,7 @@ public class Campania implements IAsociable {
         return listaDonaciones;
     }
 
-    public void eliminarDonacion(Donacion d) {
+    public void eliminarDonacion(Donacion d) {     //Funcion para una implementacion mas completa de campania
         listaDonaciones.remove(d);
         System.out.println("Donación ID " + d.getIdDonacion() + " eliminada de la campaña " + nombre);
     }

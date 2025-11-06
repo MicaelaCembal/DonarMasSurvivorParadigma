@@ -11,7 +11,6 @@ public class Main {
         ConexionDB conexionDB = new ConexionDB();
         conexionDB.crearBaseYTablas();
 
-        // Instanciamos ambos gestores
         GestorDonacion gestorDonacion = new GestorDonacion();
         GestorUsuario gestorUsuario = new GestorUsuario();
 
@@ -24,7 +23,7 @@ public class Main {
         System.out.println("4. Test Rapido: Deposito Lleno");
         System.out.print("Elegi una opcion: ");
         int opcion = sc.nextInt();
-        sc.nextLine(); // Consumir salto de linea
+        sc.nextLine();
 
         if (opcion == 4) {
             ejecutarTestDeposito();
@@ -32,7 +31,7 @@ public class Main {
             return;
         }
 
-        // --- LOGIN / REGISTRO ---
+
         System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
         Usuario usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
@@ -55,11 +54,11 @@ public class Main {
                 }
             }
             gestorUsuario.guardarUsuario(usuarioActual);
-            usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail); // Recargar ID real
+            usuarioActual = gestorUsuario.buscarUsuarioPorMail(mail);
         }
         System.out.println("Hola, " + usuarioActual.getNombre() + " (" + usuarioActual.getClass().getSimpleName() + ")");
 
-        // --- MENUS SEGUN ROL ---
+        //  Opciones segun el tipo de usuario
 
         if (usuarioActual instanceof Donante donante) {
             System.out.println("\n--- Panel de Donante ---");
@@ -69,9 +68,9 @@ public class Main {
                 String tipo = sc.nextLine();
                 System.out.print("Cantidad: ");
                 int cant = sc.nextInt();
-                sc.nextLine(); // Consumir enter
+                sc.nextLine();
 
-                // Opcionales
+
                 System.out.print("Nombre Deposito: ");
                 String nomDep = sc.nextLine();
                 System.out.print("Nombre Campaña: ");
@@ -80,11 +79,11 @@ public class Main {
                 try {
                     Donacion d = new Donacion(tipo, cant);
 
-                    // Asignar deposito si el usuario escribio algo
+
                     if (!nomDep.isEmpty()) {
                         d.asignarDeposito(new Deposito(nomDep));
                     }
-                    // Asignar campaña si el usuario escribio algo
+
                     if (!nomCamp.isEmpty()) {
                         Campania c = new Campania();
                         c.setNombre(nomCamp);
@@ -176,7 +175,7 @@ public class Main {
         System.out.println("\n=== INICIO TEST: DEPOSITO LLENO ===");
         Deposito depositoTest = new Deposito("Deposito Experimental");
         try {
-            for (int i = 1; i <= 16; i++) {
+            for (int i = 1; i <= Deposito.CAPACIDAD_MAXIMA + 1; i++) {
                 Donacion d = new Donacion("Item " + i, 1);
                 depositoTest.agregarDonacion(d);
             }

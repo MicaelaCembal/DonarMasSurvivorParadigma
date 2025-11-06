@@ -57,7 +57,6 @@ public class ConexionDB {
             """);
             System.out.println("Tabla 'donacion' verificada.");
 
-            // AGREGADO 'UNIQUE' A LA COLUMNA MAIL
             stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS usuario (
                     idUsuario INT PRIMARY KEY AUTO_INCREMENT,
