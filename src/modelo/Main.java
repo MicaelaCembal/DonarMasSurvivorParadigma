@@ -151,9 +151,9 @@ public class Main {
                     boolean encontrada = false;
                     for (Donacion d : donaciones) {
                         if (d.getIdDonacion() == idDon) {
-                            // Actualiza en memoria (usa el metodo de Voluntario)
-                            voluntario.registrarActualizacionEstado(d, nuevoEstado);
-                            // Actualiza en DB (usa el Gestor)
+
+                            voluntario.registrarEntrega(d, nuevoEstado);
+
                             gestorDonacion.actualizarEstadoDonacionDB(idDon, nuevoEstado);
                             encontrada = true;
                             break;

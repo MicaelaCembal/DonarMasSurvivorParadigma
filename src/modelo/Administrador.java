@@ -8,7 +8,7 @@ public class Administrador extends Usuario {
         super(idUsuario, nombre, mail, contraseña);
     }
 
-    @Override
+    @Override    //se hace desde el gestorUsuario
     public void eliminar() {
         System.out.println("Administrador " + nombre + " fue eliminado del sistema (registro cerrado).");
     }

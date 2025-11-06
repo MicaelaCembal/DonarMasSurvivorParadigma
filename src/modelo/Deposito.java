@@ -47,7 +47,7 @@ public class Deposito implements IAsociable {
         boolean encontrado = false;
         for (InventarioItem item : inventario) {
             if (item.getDescripcion().equalsIgnoreCase(donacion.getTipoDonacion())) {
-                item.sumarCantidad(donacion.getCantidad()); // Usamos el nuevo método
+                item.sumarCantidad(donacion.getCantidad());
                 encontrado = true;
                 break;
             }

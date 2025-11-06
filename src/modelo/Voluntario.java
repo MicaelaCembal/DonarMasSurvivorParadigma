@@ -9,7 +9,7 @@ public class Voluntario extends Usuario {
     }
 
 
-    public void registrarActualizacionEstado(Donacion d, EstadoDonacion nuevoEstado) {
+    public void registrarEntrega(Donacion d, EstadoDonacion nuevoEstado) {
         d.actualizarEstadoDonacion(nuevoEstado);
         System.out.println(" Voluntario " + nombre + " registro el cambio de estado de la donacion ID " + d.getIdDonacion() + " a " + nuevoEstado);
     }

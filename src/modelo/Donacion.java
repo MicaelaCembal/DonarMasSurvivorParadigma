@@ -86,7 +86,7 @@ public class Donacion {
         }
     }
 
-    // --- Getters y Setters ---
+
     public int getIdDonacion() { return idDonacion; }
     public EstadoDonacion getEstadoDonacion() { return estadoDonacion; }
     public String getTipoDonacion() { return tipoDonacion; }

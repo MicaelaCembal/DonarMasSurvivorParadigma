@@ -28,7 +28,7 @@ public abstract class Usuario implements IRegistrable {
     }
 
 
-    public void mostrarDatos() {
+    public void mostrarDatos() {   //se implementa pero por cada clase
         System.out.println("ID: " + idUsuario);
         System.out.println("Nombre: " + nombre);
         System.out.println("Mail: " + mail);

@@ -12,23 +12,18 @@ public class Donante extends Usuario {
         this.listaDonaciones = new ArrayList<>();
     }
 
-    @Override
-    public void registrar() {
-        System.out.println("Donante " + nombre + " se registró correctamente como nuevo donante.");
-    }
-
     public void realizarDonacion(Donacion d) {
         listaDonaciones.add(d);
         System.out.println(nombre + " realizó una donación de tipo " + d.getTipoDonacion());
     }
 
-    public void verHistorial() {
+    public void verHistorial() {  //Falto la implementacion
         System.out.println("Historial de donaciones de " + nombre + ":");
         for (Donacion d : listaDonaciones)
             d.mostrarDonacion();
     }
 
-    public void consultarEstadoDonacion() {
+    public void consultarEstadoDonacion() { //Falto la implementacion
         for (Donacion d : listaDonaciones)
             System.out.println("Donación ID " + d.getIdDonacion() + ": " + d.getEstadoDonacion());
     }
