@@ -1,6 +1,7 @@
 package controlador;
 
-import modelo.Deposito; // <--- IMPORTANTE
+import modelo.Campania;
+import modelo.Deposito;
 import modelo.Donacion;
 import modelo.datos.GestorDonacion;
 import vista.FormRegistrarDonacion;
@@ -26,23 +27,22 @@ public class ControladorDonacion implements ActionListener {
             String objeto = vista.getTxtObjetoDonar().getText().trim();
             String cantidadStr = vista.getTxtCantidad().getText().trim();
             String lugar = vista.getTxtLugarEntrega().getText().trim();
+            Campania campania = (Campania) vista.getComboBoxCampania().getSelectedItem();
 
-            // 2. Validar que no estén vacíos
-            if (objeto.isEmpty() || cantidadStr.isEmpty() || lugar.isEmpty()) {
-                vista.getLblMensaje().setText("Por favor, complete todos los campos.");
+            // 2. Validar que no estén vacíos y que se haya seleccionado campaña
+            if (objeto.isEmpty() || cantidadStr.isEmpty() || lugar.isEmpty() || campania == null) {
+                vista.getLblMensaje().setText("Por favor, complete todos los campos y seleccione una campaña.");
                 return;
             }
 
             try {
+                // 3. Validar y parsear cantidad
                 int cantidad = Integer.parseInt(cantidadStr);
 
-                // 3. Crear la donación (esto valida si cantidad > 0)
+                // 4. Crear la donación y asignar depósito y campaña
                 Donacion donacion = new Donacion(objeto, cantidad);
-
-                // 4. --- CORRECCIÓN CLAVE ---
-                // Creamos un objeto Deposito con el nombre ingresado y lo asignamos.
-                // Ya no usamos .setDeposito(String), sino .asignarDeposito(Deposito)
                 donacion.asignarDeposito(new Deposito(lugar));
+                donacion.asignarCampania(campania);
 
                 // 5. Guardar en la base de datos
                 gestor.guardarDonacion(donacion);
