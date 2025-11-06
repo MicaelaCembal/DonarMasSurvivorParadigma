@@ -123,7 +123,7 @@ public class Main {
         System.out.println("\n=== INICIO TEST: DEPOSITO LLENO ===");
         Deposito depositoTest = new Deposito("Deposito Experimental");
         try {
-            for (int i = 1; i <= 16; i++) {
+            for (int i = 1; i <= Deposito.CAPACIDAD_MAXIMA +1; i++) {
                 Donacion d = new Donacion("Item " + i, 1);
                 depositoTest.agregarDonacion(d);
             }

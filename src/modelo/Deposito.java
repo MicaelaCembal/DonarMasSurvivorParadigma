@@ -5,17 +5,14 @@ import java.util.List;
 
 public class Deposito implements IAsociable {
 
-    // --- CORRECCIÓN AQUÍ ---
-    // Cambiamos 'Exception' por 'RuntimeException'.
-    // Esto evita el error de conflicto con la interfaz IAsociable.
+
     public static class DepositoLlenoException extends RuntimeException {
         public DepositoLlenoException(String mensaje) {
             super(mensaje);
         }
     }
-    // -----------------------
 
-    private static final int CAPACIDAD_MAXIMA = 15;
+    protected static final int CAPACIDAD_MAXIMA = 15;
 
     private int idDeposito;
     private String ubicacion;
@@ -34,9 +31,7 @@ public class Deposito implements IAsociable {
     }
 
     @Override
-    // Al ser RuntimeException, no estamos OBLIGADOS a poner 'throws' aquí,
-    // pero es buena práctica dejarlo para saber que puede ocurrir.
-    // El compilador ya no dará error porque RuntimeException no rompe contratos de interfaz.
+
     public void agregarDonacion(Donacion donacion) throws DepositoLlenoException {
         if (!verificarEstadoDisponible()) {
             throw new DepositoLlenoException("El depósito '" + this.ubicacion +
@@ -44,7 +39,7 @@ public class Deposito implements IAsociable {
         }
 
         listaDonaciones.add(donacion);
-        System.out.println("✅ Donación ID " + donacion.getIdDonacion() +
+        System.out.println(" Donación ID " + donacion.getIdDonacion() +
                 " añadida al depósito " + ubicacion + ".");
 
         actualizarInventario(donacion);
