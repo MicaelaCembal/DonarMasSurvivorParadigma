@@ -66,9 +66,12 @@ public class Main {
                 System.out.print("Cantidad: ");
                 int cantidad = sc.nextInt();
                 sc.nextLine();
+                System.out.print("Lugar de entrega (depósito): ");
+                String deposito = sc.nextLine();
 
                 try {
                     Donacion d = new Donacion(tipo, cantidad);
+                    d.setDeposito(deposito);
                     gestor.guardarDonacion(d);
                     donante.realizarDonacion(d);
                     System.out.println("Donacion registrada con exito.");

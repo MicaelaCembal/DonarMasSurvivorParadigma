@@ -74,6 +74,7 @@ public class GestorDonacion {
         return lista;
     }
 
+
     public void guardarUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nombre, mail, contraseña, tipo) VALUES (?, ?, ?, ?)";
         try (Connection conn = conexionDB.conectar();
