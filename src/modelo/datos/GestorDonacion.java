@@ -19,6 +19,8 @@ public class GestorDonacion {
         Donacion.inicializarContador(obtenerMaxIdDonacion());
     }
 
+    // --- METODOS DONACION ---
+
     public int obtenerMaxIdDonacion() {
         String sql = "SELECT MAX(idDonacion) FROM donacion";
         int maxId = 0;
@@ -43,8 +45,9 @@ public class GestorDonacion {
             ps.setInt(3, donacion.getCantidad());
             ps.setTimestamp(4, Timestamp.valueOf(donacion.getFecha()));
             ps.setString(5, donacion.getEstadoDonacion().toString());
+            // Verificamos si es null antes de intentar obtener el nombre/ubicacion
             ps.setString(6, donacion.getCampania() != null ? donacion.getCampania().getNombre() : null);
-            ps.setString(7, donacion.getDeposito());
+            ps.setString(7, donacion.getDeposito() != null ? donacion.getDeposito().getUbicacion() : null);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Error al guardar donacion: " + e.getMessage());
@@ -63,9 +66,10 @@ public class GestorDonacion {
                         rs.getString("tipoDonacion"),
                         rs.getInt("cantidad"),
                         rs.getTimestamp("fecha").toLocalDateTime(),
-                        EstadoDonacion.valueOf(rs.getString("estadoDonacion"))
+                        EstadoDonacion.valueOf(rs.getString("estadoDonacion")),
+                        rs.getString("campania"),
+                        rs.getString("deposito")
                 );
-                d.setDeposito(rs.getString("deposito"));
                 lista.add(d);
             }
         } catch (SQLException e) {
@@ -74,6 +78,7 @@ public class GestorDonacion {
         return lista;
     }
 
+    // --- METODOS USUARIO ---
 
     public void guardarUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nombre, mail, contraseña, tipo) VALUES (?, ?, ?, ?)";
@@ -91,26 +96,31 @@ public class GestorDonacion {
         }
     }
 
-    public Usuario buscarUsuarioPorNombre(String nombre) {
-        String sql = "SELECT * FROM usuario WHERE nombre = ?";
+    // --- METODO CORREGIDO Y MEJORADO ---
+    public Usuario buscarUsuarioPorMail(String mail) {
+        String sql = "SELECT * FROM usuario WHERE mail = ?";
         try (Connection conn = conexionDB.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nombre);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return crearUsuarioPorTipo(
-                        rs.getInt("idUsuario"),
-                        rs.getString("nombre"),
-                        rs.getString("mail"),
-                        rs.getString("contraseña"),
-                        rs.getString("tipo")
-                );
+            ps.setString(1, mail);
+
+            // Usamos try-with-resources tambien para el ResultSet para asegurar su cierre
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return crearUsuarioPorTipo(
+                            rs.getInt("idUsuario"),
+                            rs.getString("nombre"),
+                            rs.getString("mail"),
+                            rs.getString("contraseña"),
+                            rs.getString("tipo")
+                    );
+                }
             }
         } catch (SQLException e) {
-            System.err.println("Error al buscar usuario: " + e.getMessage());
+            System.err.println("Error tecnico al buscar usuario por mail: " + e.getMessage());
         }
-        return null;
+        return null; // Retorna null si no se encontro o hubo error
     }
+    // ------------------------------------
 
     public void eliminarUsuario(int idUsuario) throws UsuarioNoEncontradoException {
         String sql = "DELETE FROM usuario WHERE idUsuario = ?";
@@ -150,6 +160,8 @@ public class GestorDonacion {
     }
 
     private Usuario crearUsuarioPorTipo(int id, String nombre, String mail, String pass, String tipo) {
+        // Convertimos a minusculas para evitar problemas si en la DB quedo guardado distinto
+        if (tipo == null) return null;
         return switch (tipo.toLowerCase()) {
             case "donante" -> new Donante(id, nombre, mail, pass);
             case "voluntario" -> new Voluntario(id, nombre, mail, pass);

@@ -21,7 +21,7 @@ public class Main {
         System.out.println("4. Test Rapido: Deposito Lleno");
         System.out.print("Elegi una opcion: ");
         int opcion = sc.nextInt();
-        sc.nextLine();
+        sc.nextLine(); // Consumir salto de linea
 
         if (opcion == 4) {
             ejecutarTestDeposito();
@@ -32,12 +32,12 @@ public class Main {
         System.out.print("Ingresa tu mail: ");
         String mail = sc.nextLine();
 
-        Usuario usuarioActual = gestor.buscarUsuarioPorNombre(mail);
+        Usuario usuarioActual = gestor.buscarUsuarioPorMail(mail);
 
         if (usuarioActual != null) {
-            System.out.println(">>> Usuario encontrado! Bienvenido de nuevo, " + usuarioActual.getNombre());
+            System.out.println(">>> Bienvenido de nuevo, " + usuarioActual.getNombre());
         } else {
-            System.out.println(">>> Usuario nuevo. Por favor completa tu registro.");
+            System.out.println(">>> Usuario nuevo. Completa tu registro.");
             System.out.print("Nombre: ");
             String nombre = sc.nextLine();
             System.out.print("Contraseña: ");
@@ -54,8 +54,11 @@ public class Main {
                 }
             }
             gestor.guardarUsuario(usuarioActual);
-            usuarioActual = gestor.buscarUsuarioPorNombre(mail);
+            // Recargamos para tener el ID real de la DB
+            usuarioActual = gestor.buscarUsuarioPorMail(mail);
         }
+
+        // --- MENU SEGUN TIPO DE USUARIO ---
 
         if (usuarioActual instanceof Donante donante) {
             System.out.println("\n--- Panel de Donante ---");
@@ -66,12 +69,14 @@ public class Main {
                 System.out.print("Cantidad: ");
                 int cantidad = sc.nextInt();
                 sc.nextLine();
-                System.out.print("Lugar de entrega (depósito): ");
-                String deposito = sc.nextLine();
+                System.out.print("Lugar de entrega (nombre del deposito): ");
+                String nombreDeposito = sc.nextLine();
 
                 try {
                     Donacion d = new Donacion(tipo, cantidad);
-                    d.setDeposito(deposito);
+                    // Creamos un objeto deposito temporal con ese nombre para asignarlo
+                    d.asignarDeposito(new Deposito(nombreDeposito));
+
                     gestor.guardarDonacion(d);
                     donante.realizarDonacion(d);
                     System.out.println("Donacion registrada con exito.");
@@ -98,15 +103,11 @@ public class Main {
                 System.out.print("ID del usuario a eliminar: ");
                 int idEliminar = sc.nextInt();
                 sc.nextLine();
-
-                // --- AQUI ESTA EL TRY-CATCH SOLICITADO ---
                 try {
                     gestor.eliminarUsuario(idEliminar);
-                    // Si llega aqui, el mensaje de exito ya lo imprimio el gestor.
                 } catch (GestorDonacion.UsuarioNoEncontradoException e) {
-                    System.out.println("ERROR AL ELIMINAR: " + e.getMessage());
+                    System.out.println("Error: " + e.getMessage());
                 }
-                // -----------------------------------------
             }
 
         } else if (usuarioActual instanceof Voluntario voluntario) {
@@ -119,16 +120,18 @@ public class Main {
     }
 
     private static void ejecutarTestDeposito() {
-        // (El código del test de depósito sigue igual...)
-        System.out.println("Ejecutando test de deposito...");
+        System.out.println("\n=== INICIO TEST: DEPOSITO LLENO ===");
         Deposito depositoTest = new Deposito("Deposito Experimental");
         try {
             for (int i = 1; i <= 16; i++) {
                 Donacion d = new Donacion("Item " + i, 1);
                 depositoTest.agregarDonacion(d);
             }
-        } catch (Exception e) {
+        } catch (Deposito.DepositoLlenoException e) {
             System.out.println("EXITO DEL TEST: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("FALLO EL TEST: " + e.getMessage());
         }
+        System.out.println("===================================\n");
     }
 }

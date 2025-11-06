@@ -21,24 +21,35 @@ public class ControladorAcceso implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vista.getBtnIngresar()) {
-            String nombre = vista.getTxtNombre().getText().trim();
+            // AHORA USAMOS EL CAMPO DE TEXTO COMO MAIL
+            String mail = vista.getTxtNombre().getText().trim();
             String clave = vista.getPwdClave().getText().trim();
 
-            if (nombre.isEmpty() || clave.isEmpty()) {
-                vista.getLblMensaje().setText("Por favor, complete usuario y clave.");
+            if (mail.isEmpty() || clave.isEmpty()) {
+                vista.getLblMensaje().setText("Por favor, complete mail y clave.");
                 return;
             }
 
-            Usuario usuario = gestor.buscarUsuarioPorNombre(nombre);
+            // USAMOS EL NUEVO METODO DE BUSQUEDA POR MAIL
+            Usuario usuario = gestor.buscarUsuarioPorMail(mail);
 
-            if (usuario != null && usuario.getContraseña().equals(clave)
-                    && usuario.getClass().getSimpleName().equalsIgnoreCase("Donante")) {
+            // Validamos: 1) Existe usuario, 2) Contraseña coincide, 3) Es tipo Donante
+            if (usuario != null && usuario.getContraseña().equals(clave)) {
 
-                vista.getLblMensaje().setText("Acceso correcto. Bienvenido " + usuario.getNombre() + ".");
-                FormRegistrarDonacion registrarDonacion = new FormRegistrarDonacion();
-                new ControladorDonacion(registrarDonacion);
-                registrarDonacion.setVisible(true);
-                vista.dispose();
+                if (usuario.getClass().getSimpleName().equalsIgnoreCase("Donante")) {
+                    vista.getLblMensaje().setText("Acceso correcto. Bienvenido " + usuario.getNombre() + ".");
+
+                    // Abrir la ventana de registro de donaciones
+                    FormRegistrarDonacion registrarDonacion = new FormRegistrarDonacion();
+                    new ControladorDonacion(registrarDonacion);
+                    registrarDonacion.setVisible(true);
+
+                    // Cerrar la ventana de acceso
+                    vista.dispose();
+                } else {
+                    // Si es Admin o Voluntario, por ahora no tiene ventana grafica
+                    vista.getLblMensaje().setText("Acceso solo para Donantes en esta version.");
+                }
 
             } else {
                 vista.getLblMensaje().setText("Usuario o clave incorrectos.");
